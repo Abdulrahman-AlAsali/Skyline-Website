@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skyline | Weather, beautifully simple</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #10213e;
+      --muted: #64748b;
+      --line: rgba(15, 38, 70, .10);
+      --glass: rgba(255, 255, 255, .72);
+      --blue: #00a4ef;
+      --navy: #005a9e;
+      --yellow: #ffb900;
+      --shadow: 0 20px 55px rgba(15, 55, 102, .14);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #eaf8ff 0%, #f7fbff 50%, #fff7de 100%);
+    }
+
+    body:before,
+    body:after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      border-radius: 50%;
+      filter: blur(10px);
+      opacity: .52
+    }
+
+    body:before {
+      width: 500px;
+      height: 500px;
+      top: -170px;
+      right: -120px;
+      background: #8ddcff
+    }
+
+    body:after {
+      width: 430px;
+      height: 430px;
+      bottom: -190px;
+      left: -130px;
+      background: #ffe286
+    }
+
+    .wrap {
+      max-width: 1160px;
+      padding: 28px 24px 55px;
+      margin: auto
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: Outfit;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.7px
+    }
+
+    .mark {
+      width: 35px;
+      height: 35px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue), #56c7ff);
+      display: grid;
+      place-items: center;
+      color: white;
+      box-shadow: 0 9px 18px rgba(0, 164, 239, .28)
+    }
+
+    .badge {
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 100px;
+      background: rgba(255, 255, 255, .55);
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600
+    }
+
+    .hero {
+      text-align: center;
+      margin: auto auto 30px;
+      max-width: 730px
+    }
+
+    .eyebrow {
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.7px;
+      text-transform: uppercase
+    }
+
+    .hero h1 {
+      margin: 10px 0 10px;
+      font: 800 clamp(38px, 7vw, 67px)/1.03 Outfit, sans-serif;
+      letter-spacing: -2.5px
+    }
+
+    .hero p {
+      margin: 0 auto 25px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.5;
+      max-width: 540px
+    }
+
+    .search {
+      display: flex;
+      gap: 10px;
+      max-width: 600px;
+      margin: auto;
+      padding: 8px;
+      background: rgba(255, 255, 255, .78);
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: 17px;
+      box-shadow: var(--shadow)
+    }
+
+    .search input {
+      border: 0;
+      outline: 0;
+      min-width: 0;
+      flex: 1;
+      padding: 8px 11px;
+      font: 500 16px "DM Sans";
+      background: transparent;
+      color: var(--ink)
+    }
+
+    .search button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 13px 18px;
+      color: #fff;
+      background: var(--navy);
+      font: 700 14px "DM Sans";
+      transition: .2s
+    }
+
+    .search button:hover {
+      transform: translateY(-2px);
+      background: #00477c
+    }
+
+    .chips {
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 15px
+    }
+
+    .chip {
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .48);
+      padding: 7px 12px;
+      border-radius: 20px;
+      color: #476078;
+      font: 600 13px "DM Sans"
+    }
+
+    .chip:hover {
+      background: #fff;
+      color: var(--navy)
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 20px;
+      margin-top: 38px
+    }
+
+    .card {
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, .8);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      box-shadow: var(--shadow)
+    }
+
+    .current {
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      min-height: 327px
+    }
+
+    .current:after {
+      content: "☀";
+      position: absolute;
+      right: -19px;
+      top: -47px;
+      font: 220px/1 Outfit;
+      color: rgba(255, 185, 0, .17)
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 18px
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 5px 0 28px
+    }
+
+    .weather-main {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      z-index: 1
+    }
+
+    .weather-icon {
+      font-size: 78px;
+      filter: drop-shadow(0 7px 7px rgba(255, 185, 0, .2))
+    }
+
+    .temp {
+      font: 700 75px/.85 Outfit;
+      letter-spacing: -4px
+    }
+
+    .temp small {
+      font: 600 25px Outfit;
+      letter-spacing: 0;
+      vertical-align: top
+    }
+
+    .condition {
+      color: var(--muted);
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: 600
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 31px;
+      position: relative;
+      z-index: 1
+    }
+
+    .metric {
+      background: rgba(255, 255, 255, .6);
+      border: 1px solid rgba(255, 255, 255, .8);
+      padding: 12px 10px;
+      border-radius: 14px
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 4px
+    }
+
+    .metric b {
+      font: 700 15px Outfit
+    }
+
+    .right {
+      display: grid;
+      gap: 20px
+    }
+
+    .details {
+      padding: 24px
+    }
+
+    .card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 19px;
+      font: 700 17px Outfit
+    }
+
+    .live {
+      font: 700 11px "DM Sans";
+      color: #16803d;
+      background: #dcfce7;
+      padding: 5px 8px;
+      border-radius: 20px
+    }
+
+    .live:before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background: #22c55e
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .detail {
+      padding: 12px;
+      background: rgba(255, 255, 255, .48);
+      border-radius: 13px
+    }
+
+    .detail label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 5px
+    }
+
+    .detail strong {
+      font: 700 15px Outfit
+    }
+
+    .forecast {
+      padding: 24px;
+      grid-column: 1/-1
+    }
+
+    .days {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px
+    }
+
+    .day {
+      padding: 13px 8px;
+      text-align: center;
+      border-radius: 14px;
+      transition: .2s
+    }
+
+    .day:hover {
+      background: rgba(255, 255, 255, .72);
+      transform: translateY(-3px)
+    }
+
+    .day:first-child {
+      background: var(--navy);
+      color: white
+    }
+
+    .day-name {
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .day-icon {
+      font-size: 27px;
+      margin: 9px 0
+    }
+
+    .hi {
+      font: 700 15px Outfit
+    }
+
+    .lo {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 4px
+    }
+
+    .day:first-child .lo {
+      color: #b4ddf8
+    }
+
+    .loading {
+      opacity: .55;
+      pointer-events: none
+    }
+
+    .error {
+      margin-top: 16px;
+      text-align: center;
+      color: #b42318;
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 18px
+    }
+
+    footer {
+      text-align: center;
+      color: #6e8195;
+      font-size: 12px;
+      margin-top: 28px
+    }
+
+    @media(max-width:720px) {
+      .wrap {
+        padding: 20px 15px 35px
+      }
+
+      nav {
+        margin-bottom: 35px
+      }
+
+      .badge {
+        display: none
+      }
+
+      .dashboard {
+        grid-template-columns: 1fr
+      }
+
+      .forecast {
+        grid-column: auto
+      }
+
+      .days {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 3px
+      }
+
+      .day {
+        padding: 11px 2px
+      }
+
+      .current {
+        min-height: auto
+      }
+
+      .hero h1 {
+        letter-spacing: -1.7px
+      }
+
+      .temp {
+        font-size: 64px
+      }
+
+      .search button {
+        padding: 13px
+      }
+
+      .metrics {
+        gap: 7px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <nav>
+      <div class="brand">
+        <div class="mark">✦</div>skyline
+      </div>
+      <div class="badge">Live global weather</div>
+    </nav>
+    <section class="hero">
+      <div class="eyebrow">Plan your day with confidence</div>
+      <h1>The sky, at a glance.</h1>
+      <p>Search any city for a clear, elegant weather forecast—updated live.</p>
+      <form class="search" id="form"><input id="city" aria-label="City name" placeholder="Search a city…"
+          value="Gloucester" autocomplete="off"><button>Check weather →</button></form>
+      <div class="chips"><button class="chip">Gloucester</button><button class="chip">London</button><button
+          class="chip">New York</button><button class="chip">Tokyo</button></div>
+      <div class="error" id="error"></div>
+    </section>
+    <section class="dashboard" id="dashboard">
+      <article class="card current">
+        <div class="location">⌖ <span id="location">Gloucester, England</span></div>
+        <div class="sub" id="updated">Loading live conditions…</div>
+        <div class="weather-main">
+          <div class="weather-icon" id="icon">☀️</div>
+          <div>
+            <div class="temp"><span id="temp">--</span><small>°C</small></div>
+            <div class="condition" id="condition">Fetching forecast</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span>Feels like</span><b id="feels">--°</b></div>
+          <div class="metric"><span>Wind</span><b id="wind">-- km/h</b></div>
+          <div class="metric"><span>Humidity</span><b id="humidity">--%</b></div>
+        </div>
+      </article>
+      <div class="right">
+        <article class="card details">
+          <div class="card-title">Today’s details <span class="live">LIVE</span></div>
+          <div class="detail-grid">
+            <div class="detail"><label>Precipitation</label><strong id="rain">-- mm</strong></div>
+            <div class="detail"><label>Cloud cover</label><strong id="cloud">--%</strong></div>
+            <div class="detail"><label>Sunrise</label><strong id="sunrise">--:--</strong></div>
+            <div class="detail"><label>Sunset</label><strong id="sunset">--:--</strong></div>
+          </div>
+        </article>
+        <article class="card details">
+          <div class="card-title">A gentle reminder <span>☁️</span></div>
+          <p id="tip" style="margin:0;color:var(--muted);font-size:14px;line-height:1.45">A useful forecast is on its
+            way.</p>
+        </article>
+      </div>
+      <article class="card forecast">
+        <div class="card-title">5-day outlook <span style="color:var(--muted);font:600 12px DM Sans">Hover a day to
+            explore</span></div>
+        <div class="days" id="days"></div>
+      </article>
+    </section>
+    <footer>Built with Open-Meteo data · No sign-up required</footer>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const codes = { 0: ['☀️', 'Clear sky'], 1: ['🌤️', 'Mostly clear'], 2: ['⛅', 'Partly cloudy'], 3: ['☁️', 'Overcast'], 45: ['🌫️', 'Foggy'], 48: ['🌫️', 'Foggy'], 51: ['🌦️', 'Light drizzle'], 53: ['🌦️', 'Drizzle'], 55: ['🌧️', 'Heavy drizzle'], 61: ['🌦️', 'Light rain'], 63: ['🌧️', 'Rain'], 65: ['🌧️', 'Heavy rain'], 71: ['🌨️', 'Light snow'], 73: ['🌨️', 'Snow'], 75: ['❄️', 'Heavy snow'], 80: ['🌦️', 'Showers'], 81: ['🌧️', 'Showers'], 82: ['⛈️', 'Heavy showers'], 95: ['⛈️', 'Thunderstorm'], 96: ['⛈️', 'Thunderstorm'], 99: ['⛈️', 'Thunderstorm'] };
+    function weather(w) { return codes[w] || ['🌤️', 'Changing skies'] };
+    function time(v) { return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit' }).format(new Date(v)) };
+    function dateName(v, i) { return i === 0 ? 'Today' : new Intl.DateTimeFormat('en-GB', { weekday: 'short' }).format(new Date(v + 'T12:00')) }
+    async function findCity(name) {
+      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`); const data = await r.json(); if (!data.results?.length) throw new Error('We could not find that city. Try a different spelling.'); return data.results[0];
+    }
+    async function load(name) {
+      $('error').textContent = ''; $('dashboard').classList.add('loading');
+      try {
+        const place = await findCity(name); const q = new URLSearchParams({ latitude: place.latitude, longitude: place.longitude, current: 'temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,cloud_cover,weather_code,wind_speed_10m', daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset', timezone: 'auto', forecast_days: 5 }); const r = await fetch('https://api.open-meteo.com/v1/forecast?' + q); if (!r.ok) throw new Error('Weather service is unavailable. Please try again.'); const d = await r.json(), c = d.current, icon = weather(c.weather_code); $('location').textContent = `${place.name}${place.admin1 ? ', ' + place.admin1 : ''}${place.country ? ', ' + place.country : ''}`; $('updated').textContent = `Updated ${time(c.time)} · ${d.timezone_abbreviation || d.timezone}`; $('temp').textContent = Math.round(c.temperature_2m); $('icon').textContent = icon[0]; $('condition').textContent = icon[1]; $('feels').textContent = `${Math.round(c.apparent_temperature)}°C`; $('wind').textContent = `${Math.round(c.wind_speed_10m)} km/h`; $('humidity').textContent = `${c.relative_humidity_2m}%`; $('rain').textContent = `${c.precipitation} mm`; $('cloud').textContent = `${c.cloud_cover}%`; $('sunrise').textContent = time(d.daily.sunrise[0]); $('sunset').textContent = time(d.daily.sunset[0]); $('tip').textContent = c.precipitation > 0 ? 'Keep an umbrella close—rain is currently falling.' : c.temperature_2m < 10 ? 'A light layer will make the outdoors much more comfortable.' : 'A lovely time to get outside and make the most of the day.';
+        $('days').innerHTML = d.daily.time.map((day, i) => { const w = weather(d.daily.weather_code[i]); return `<div class="day"><div class="day-name">${dateName(day, i)}</div><div class="day-icon">${w[0]}</div><div><span class="hi">${Math.round(d.daily.temperature_2m_max[i])}°</span><span class="lo">${Math.round(d.daily.temperature_2m_min[i])}°</span></div></div>` }).join('');
+      } catch (e) { $('error').textContent = e.message } finally { $('dashboard').classList.remove('loading') }
+    }
+    $('form').addEventListener('submit', e => { e.preventDefault(); const x = $('city').value.trim(); if (x) load(x) }); document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { $('city').value = b.textContent; load(b.textContent) })); load('Gloucester');
+  </script>
+</body>
+
+</html>
